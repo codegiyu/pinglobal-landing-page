@@ -22,6 +22,9 @@ export interface UseFormProps<TSchema extends ZodType<any>> {
   noFocusOnFirstField?: boolean;
   validateOnChange?: boolean;
   submitStateResetInMs?: number;
+  inputChangeWatch?: Partial<
+    Record<keyof z.infer<TSchema>, (updatedFormValues: z.infer<TSchema>) => z.infer<TSchema>>
+  >;
 }
 
 export interface UseFormReturn<TSchema extends ZodType<any>> {
@@ -70,6 +73,7 @@ export const useForm = <TSchema extends ZodType<any>>({
   noFocusOnFirstField = false,
   validateOnChange = false,
   submitStateResetInMs = 3000,
+  inputChangeWatch = {},
 }: UseFormProps<TSchema>): UseFormReturn<TSchema> => {
   type FormValues = typeof defaultFormValues;
   type FormErrors = FormErrorsType<FormValues>;
@@ -119,12 +123,16 @@ export const useForm = <TSchema extends ZodType<any>>({
     setFormValues(prev => {
       if (prev[name] === value) return prev;
 
-      const updated = { ...prev, [name]: value };
+      let updated = { ...prev, [name]: value };
 
       if (options?.clearFields?.length) {
         for (const key of options.clearFields) {
           updated[key] = defaultFormValues[key];
         }
+      }
+
+      if (inputChangeWatch[name]) {
+        updated = inputChangeWatch[name](updated);
       }
 
       return updated;

@@ -1,10 +1,25 @@
 'use client';
-import { bookingFormData } from '@/lib/constants/forms';
+import { bookingFormData, bookingFormSchema } from '@/lib/constants/forms';
 import { RequestForm, RequestFormFileProps } from './FormTemplate';
 import { useMemo, useState } from 'react';
+import { omit } from 'lodash';
+import z from 'zod';
 
 export const BookingForm = (props: RequestFormFileProps) => {
-  return <RequestForm {...bookingFormData} {...props} />;
+  type TSchema = typeof bookingFormSchema;
+  const inputChangeWatch = (bookingFormData['inputChangeWatch'] || {}) as unknown as Partial<
+    Record<keyof z.infer<TSchema>, (updatedFormValues: z.infer<TSchema>) => z.infer<TSchema>>
+  >;
+
+  return (
+    <RequestForm
+      {...omit(bookingFormData, ['inputChangeWatch'])}
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      inputChangeWatch={inputChangeWatch}
+      {...props}
+    />
+  );
 };
 
 export const REQUEST_FORMS = {

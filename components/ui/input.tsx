@@ -9,7 +9,7 @@ function Input({ className, type, ...props }: InputProps) {
       type={type}
       data-slot="input"
       className={cn(
-        'flex w-full min-w-0 bg-transparent px-4 py-3 border border-border \
+        'flex w-full min-w-0 bg-transparent px-4 py-4 border border-border \
         rounded-[6px] focus:ring-2 focus:ring-primary focus:border-transparent \
         transition-all duration-200 font-montserrat file:text-foreground \
         placeholder:text-muted-foreground selection:bg-primary \

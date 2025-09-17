@@ -42,12 +42,13 @@ export const Header = ({ className, solidBackground, ...props }: HeaderProps) =>
       ${className ?? ''}`}
       {...props}>
       <div className="regular-container">
-        <div className="flex justify-between items-center py-4 lg:py-8">
+        <div
+          className={`flex justify-between items-center py-4 ${hasSolidBg || menuOpen ? 'lg:py-5' : 'lg:py-8'}`}>
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <GhostBtn
               Icon={LogoFull}
-              iconClass={`${hasSolidBg || menuOpen ? 'text-[1.5rem] text-primary' : 'text-[1.5rem] text-white'} transition-all duration-300 ease-in`}
+              iconClass={`${hasSolidBg || menuOpen ? 'text-[2rem] text-primary' : 'text-[2rem] text-white'} transition-all duration-300 ease-in`}
               linkProps={{ href: '/' }}
             />
           </div>

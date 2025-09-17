@@ -66,6 +66,28 @@ export const bookingFormData: RequestFormProps<typeof bookingFormSchema> = {
     'endDate',
     'additionalNotes',
   ]),
+  inputChangeWatch: {
+    startDate: updatedFormValues => {
+      // asserted to HTMLInputElement here for simplicity
+      const endDateInput = document.querySelector('input[name=endDate]') as HTMLInputElement;
+
+      // Checking if the focus method exists to decide if that element really exists
+      if (!endDateInput?.focus) return updatedFormValues;
+
+      const startDate = String(updatedFormValues.startDate);
+
+      if (!startDate) {
+        endDateInput.min = new Date().toISOString().split('T')[0];
+      }
+
+      if (new Date(endDateInput.value) < new Date(startDate)) {
+        endDateInput.min = startDate;
+        updatedFormValues['endDate'] = startDate;
+      }
+
+      return updatedFormValues;
+    },
+  },
   inputsArr: [
     [
       {
@@ -136,7 +158,7 @@ export const bookingFormData: RequestFormProps<typeof bookingFormSchema> = {
         },
       },
       {
-        name: 'startDate',
+        name: 'endDate',
         kind: 'input',
         inputProps: {
           type: 'date',

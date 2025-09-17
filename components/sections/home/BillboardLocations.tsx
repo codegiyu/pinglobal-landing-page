@@ -5,13 +5,14 @@ import { RegularBtn } from '@/components/atoms/RegularBtn';
 import { Card, CardContent } from '@/components/general/Card';
 import { Badge } from '@/components/ui/badge';
 import { AVAILABLE_BILLBOARDS, BILLBOARDS } from '@/lib/constants/texts';
+import { LucideIconComp } from '@/lib/types/general';
 import { formatPopulation } from '@/lib/utils/general';
-import { MapPin, Users, Eye } from 'lucide-react';
+import { MapPin, Users, Eye, Scan } from 'lucide-react';
 
 export const BillboardsLocations = () => {
   return (
     <section id="billboard-locations" className="py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="regular-container">
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
             Billboard Locations & Availability
@@ -42,6 +43,11 @@ export const BillboardsLocations = () => {
 };
 
 export type BillboardLocationStatus = 'available' | 'occupied';
+export interface BillboardSize {
+  width: number;
+  height: number;
+  unit: string;
+}
 export interface BillboardLocation {
   _id: string;
   name: string;
@@ -49,6 +55,7 @@ export interface BillboardLocation {
   status: BillboardLocationStatus;
   dailyViews: number;
   demographics: string;
+  size: BillboardSize;
   image: string;
 }
 
@@ -59,6 +66,7 @@ const LocationCard = ({
   status,
   dailyViews,
   demographics,
+  size,
   image,
 }: BillboardLocation) => {
   return (
@@ -82,28 +90,17 @@ const LocationCard = ({
       <CardContent className="p-6">
         <div className="mb-4">
           <h3 className="text-xl font-semibold text-foreground mb-2">{name}</h3>
-          <div className="flex items-center text-muted-foreground mb-2">
-            <MapPin className="w-4 h-4 mr-2" />
-            <span className="text-sm">{location}</span>
-          </div>
+          <DataRow LucideIcon={MapPin} property={location} />
         </div>
 
         <div className="space-y-3 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Eye className="w-4 h-4 mr-2" />
-              Daily Views
-            </div>
-            <span className="font-semibold text-foreground">{formatPopulation(dailyViews)}</span>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Users className="w-4 h-4 mr-2" />
-              Demographics
-            </div>
-            <span className="text-sm text-foreground">{demographics}</span>
-          </div>
+          <DataRow
+            LucideIcon={Scan}
+            property="Size"
+            value={`W: ${size.width}${size.unit} H: ${size.height}${size.unit}`}
+          />
+          <DataRow LucideIcon={Eye} property="Daily Views" value={formatPopulation(dailyViews)} />
+          <DataRow LucideIcon={Users} property="Demographics" value={demographics} />
         </div>
 
         {status === 'available' ? (
@@ -127,5 +124,25 @@ const LocationCard = ({
         )}
       </CardContent>
     </Card>
+  );
+};
+
+interface DataRowProps {
+  LucideIcon: LucideIconComp;
+  property: string;
+  value?: string;
+}
+
+const DataRow = ({ LucideIcon, property, value }: DataRowProps) => {
+  return (
+    <div className="grid grid-cols-[1fr_auto] items-center">
+      <div className="flex items-center text-muted-foreground">
+        <LucideIcon className="w-4 h-4 mr-2" />
+        <span className="text-sm">{property}</span>
+      </div>
+      {value && (
+        <span className="font-semibold text-foreground text-wrap break-words">{value}</span>
+      )}
+    </div>
   );
 };
