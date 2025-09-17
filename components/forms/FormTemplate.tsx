@@ -21,6 +21,9 @@ export interface RequestFormProps<
   btnText?: string;
   formSchema: TSchema;
   defaultFormValues: z.infer<TSchema>;
+  inputChangeWatch?: Partial<
+    Record<keyof z.infer<TSchema>, (updatedFormValues: z.infer<TSchema>) => z.infer<TSchema>>
+  >;
   inputsArr: (FormArrayItem<TSchema> | [FormArrayItem<TSchema>, FormArrayItem<TSchema>])[];
   filesRequired?: boolean;
 }
@@ -90,6 +93,7 @@ export const RequestForm = memo(
     files,
     setFiles,
     inputsArr,
+    inputChangeWatch,
     filesRequired,
   }: RequestFormProps<TSchema> & RequestFormFileProps) => {
     const {
@@ -110,6 +114,7 @@ export const RequestForm = memo(
       defaultFormValues,
       onSubmit,
       validateOnChange: true,
+      inputChangeWatch,
     });
 
     const formValid = useMemo(

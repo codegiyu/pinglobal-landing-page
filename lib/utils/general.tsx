@@ -299,3 +299,7 @@ export function formatPopulation(num: number): string {
 
   return `${(num / 1_000_000_000).toFixed(num % 1_000_000_000 === 0 ? 0 : 1)}B+`;
 }
+
+export const scrollToSection = (id: string) => {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+};
