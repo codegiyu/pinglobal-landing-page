@@ -17,6 +17,7 @@ export interface RegularSelectProps extends Omit<ComponentPropsWithRef<'div'>, '
   subtext?: string;
   labelClassName?: string;
   value: string;
+  name?: string;
   placeholder?: string;
   className?: string;
   onSelectChange: (value: string) => void;
@@ -36,6 +37,7 @@ export const RegularSelect = ({
   subtext,
   labelClassName = '',
   value,
+  name,
   placeholder = '',
   className = '',
   onSelectChange,
@@ -69,7 +71,7 @@ export const RegularSelect = ({
         }}
         className={cn('w-full flex items-center', className)}
         {...props}>
-        <Select value={value} onValueChange={value => onSelectChange(value)}>
+        <Select value={value} onValueChange={value => value && onSelectChange(value)} name={name}>
           <SelectTrigger
             disabled={disabled}
             hidecaretifdisabled={hideCaretIfDisabled}

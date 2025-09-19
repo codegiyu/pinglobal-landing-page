@@ -103,7 +103,7 @@ const FooterLink = ({ text, footerOnlySuffix, href, afterClick }: HeaderLinkProp
           afterClick?.();
         }}>
         <div className="w-fit px-0 relative">
-          <p className="text-gray-300 hover:text-pin-red transition-colors duration-200">
+          <p className="text-gray-300 hover:text-pin-red-light transition-colors duration-200">
             {text}
             {footerOnlySuffix || ''}
           </p>

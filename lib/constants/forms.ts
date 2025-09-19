@@ -1,7 +1,7 @@
 import { RequestFormProps, StringOrStringArraySchema } from '@/components/forms/FormTemplate';
 import { z } from 'zod';
 import { default as pick } from 'lodash/pick';
-import { AVAILABLE_BILLBOARDS } from './texts';
+import { AVAILABLE_BILLBOARD_FACES } from './texts';
 import { SelectOption } from '../types/general';
 // import { generateOptionsFromArray } from '../utils/general';
 
@@ -52,6 +52,7 @@ export const bookingFormSchema = z.object({
 });
 
 export const bookingFormData: RequestFormProps<typeof bookingFormSchema> = {
+  formId: 'booking-form',
   formName: 'Billboard Booking',
   formTitle: 'Billboard Booking Request',
   btnText: 'Request Booking',
@@ -136,11 +137,11 @@ export const bookingFormData: RequestFormProps<typeof bookingFormSchema> = {
       selectProps: {
         label: 'Select Billboard Location',
         placeholder: 'Choose an available billboard location',
-        options: AVAILABLE_BILLBOARDS.map(
-          b =>
+        options: AVAILABLE_BILLBOARD_FACES.map(
+          face =>
             ({
-              value: b._id,
-              text: `${b.name} - ${b.location}`,
+              value: `${face.billboard.billboardId} ${face.faceId}`,
+              text: `${face.billboard.name} - ${face.name}`,
             }) satisfies SelectOption
         ),
         required: true,

@@ -2,7 +2,7 @@
 import { GhostBtn } from '@/components/atoms/GhostBtn';
 import { RegularBtn } from '@/components/atoms/RegularBtn';
 import { Card, CardContent } from '@/components/general/Card';
-import { CONTACT_CARDS, SOCIALS } from '@/lib/constants/texts';
+import { CONTACT_CARDS, CONTACT_INFORMATION, SOCIALS } from '@/lib/constants/texts';
 import { IconComp, LucideIconComp } from '@/lib/types/general';
 import { MapPin } from 'lucide-react';
 
@@ -52,7 +52,7 @@ export const Contact = () => {
                   </p>
                   <RegularBtn
                     variant="cta"
-                    onClick={() => window.open('https://maps.google.com', '_blank')}>
+                    onClick={() => window.open(CONTACT_INFORMATION.locationUrl, '_blank')}>
                     Get Directions
                   </RegularBtn>
                 </div>
@@ -100,7 +100,7 @@ const ContactCard = ({ LucideIcon, Icon, title, texts, subtitle }: ContactCardPr
                 <ContactCardText key={idx} {...item} />
               ))}
             </div>
-            {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+            {subtitle && <p className="text-[0.8125rem] text-muted-foreground">{subtitle}</p>}
           </div>
         </div>
       </CardContent>

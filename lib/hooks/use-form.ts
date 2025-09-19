@@ -29,7 +29,7 @@ export interface UseFormProps<TSchema extends ZodType<any>> {
 
 export interface UseFormReturn<TSchema extends ZodType<any>> {
   formValues: z.TypeOf<TSchema>;
-  formErrors: Partial<Record<keyof z.TypeOf<TSchema>, string[] | undefined>>;
+  formErrors: Partial<Record<keyof z.TypeOf<TSchema> | 'root', string[] | undefined>>;
   setFormValues: Dispatch<SetStateAction<z.TypeOf<TSchema>>>;
   setFormErrors: (
     errors: Partial<Record<keyof z.TypeOf<TSchema> | 'root', string[] | undefined>>,
