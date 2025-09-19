@@ -1,3 +1,4 @@
+import { DIRECTIONS } from '../types/billboard';
 import { SelectOption } from '../types/general';
 import capitalize from 'lodash/capitalize';
 
@@ -303,3 +304,13 @@ export function formatPopulation(num: number): string {
 export const scrollToSection = (id: string) => {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 };
+
+export function getOrientationLabel(degrees: number): string {
+  // Normalize degrees to [0, 360] just incase degrees < 0 or degrees > 359
+  const normalized = ((degrees % 360) + 360) % 360;
+
+  // Each direction spans 22.5°
+  const index = Math.round(normalized / 22.5) % 16;
+
+  return DIRECTIONS[index];
+}

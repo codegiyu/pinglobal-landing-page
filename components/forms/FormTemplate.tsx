@@ -5,7 +5,7 @@ import { RegularInput, RegularInputProps } from '@/components/atoms/RegularInput
 import { RegularTextarea, RegularTextareaProps } from '@/components/atoms/RegularTextarea';
 import { toast } from '@/components/atoms/Toast';
 import { useForm } from '@/lib/hooks/use-form';
-import { ChangeEvent, Dispatch, memo, SetStateAction, useMemo } from 'react';
+import { ChangeEvent, Dispatch, memo, SetStateAction, useEffect, useMemo } from 'react';
 import { output, z, ZodArray, ZodEmail, ZodObject, ZodString } from 'zod';
 import { CheckCheck } from 'lucide-react';
 import { RegularSelect, RegularSelectProps } from '@/components/atoms/RegularSelect';
@@ -16,6 +16,7 @@ export type StringOrStringArraySchema = ZodString | ZodEmail | ZodArray<ZodStrin
 export interface RequestFormProps<
   TSchema extends ZodObject<Record<string, StringOrStringArraySchema>>,
 > {
+  formId: string;
   formName: string;
   formTitle: string;
   btnText?: string;
@@ -85,6 +86,7 @@ export interface RequestFormFileProps {
 
 export const RequestForm = memo(
   <TSchema extends ZodObject<Record<string, StringOrStringArraySchema>>>({
+    formId,
     formName,
     formTitle,
     btnText,
@@ -107,6 +109,7 @@ export const RequestForm = memo(
       handleInputChange,
       onChange,
       setFormErrors,
+      setFormValues,
       handleSubmit,
       validateForm,
     } = useForm({
@@ -184,6 +187,31 @@ export const RequestForm = memo(
       return false;
     }
 
+    useEffect(() => {
+      console.log({ formValues });
+    }, [formValues]);
+
+    useEffect(() => {
+      const onHashChange = () => {
+        if (window.location.hash) {
+          const hash = window.location.hash.substring(1); // remove '#'
+          console.log('Got hash:', hash);
+          const [input, value] = hash.split(':');
+
+          if (!input || !(input in formValues)) return;
+
+          setFormValues(prev => ({ ...prev, [input]: decodeURIComponent(value) }));
+
+          // Remove hash immediately
+          history.replaceState(null, '', window.location.pathname);
+        }
+      };
+
+      window.addEventListener('hashchange', onHashChange);
+      return () => window.removeEventListener('hashchange', onHashChange);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     return (
       <Card className="shadow-pin-button border-pin-gray-light">
         <CardHeader className="bg-gradient-hero text-white rounded-t-lg">
@@ -191,7 +219,7 @@ export const RequestForm = memo(
         </CardHeader>
 
         <CardContent className="px-4 500:px-6 md:px-8 py-8">
-          <form onSubmit={handleSubmit} className="grid gap-6">
+          <form id={formId} onSubmit={handleSubmit} className="grid gap-6">
             <div className="inputs-wrap grid gap-6">
               {inputsArr.map((item, idx) => (
                 <div key={idx} className="w-full">
@@ -328,6 +356,7 @@ const FormInputItem = <TSchema extends ZodObject<Record<string, StringOrStringAr
       <RegularSelect
         value={formValues[name] as string}
         onSelectChange={val => onChange(name, val)}
+        name={name as string}
         errors={errorsVisible ? formErrors[name] : undefined}
         {...selectProps}
       />

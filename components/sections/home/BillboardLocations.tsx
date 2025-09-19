@@ -4,10 +4,11 @@
 import { RegularBtn } from '@/components/atoms/RegularBtn';
 import { Card, CardContent } from '@/components/general/Card';
 import { Badge } from '@/components/ui/badge';
-import { AVAILABLE_BILLBOARDS, BILLBOARDS } from '@/lib/constants/texts';
+import { AVAILABLE_BILLBOARD_FACES, BILLBOARDS } from '@/lib/constants/texts';
+import { BillboardFace, BillboardSize } from '@/lib/types/billboard';
 import { LucideIconComp } from '@/lib/types/general';
-import { formatPopulation } from '@/lib/utils/general';
-import { MapPin, Users, Eye, Scan } from 'lucide-react';
+import { formatPopulation, getOrientationLabel } from '@/lib/utils/general';
+import { MapPin, Users, Eye, Compass, Ruler } from 'lucide-react';
 
 export const BillboardsLocations = () => {
   return (
@@ -27,14 +28,14 @@ export const BillboardsLocations = () => {
               {BILLBOARDS.length} Total Locations
             </Badge>
             <Badge className="text-sm px-4 py-2 bg-green-500 hover:bg-green-600">
-              {AVAILABLE_BILLBOARDS.length} Available Now
+              {AVAILABLE_BILLBOARD_FACES.length} Available Faces
             </Badge>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {BILLBOARDS.map(billboard => (
-            <LocationCard key={billboard._id} {...billboard} />
+            <LocationCard key={billboard.billboardId} {...billboard} />
           ))}
         </div>
       </div>
@@ -42,86 +43,74 @@ export const BillboardsLocations = () => {
   );
 };
 
-export type BillboardLocationStatus = 'available' | 'occupied';
-export interface BillboardSize {
-  width: number;
-  height: number;
-  unit: string;
-}
-export interface BillboardLocation {
-  _id: string;
+export interface BillboardDisplay {
+  billboardId: string;
   name: string;
-  location: string;
-  status: BillboardLocationStatus;
+  address: string;
   dailyViews: number;
   demographics: string;
-  size: BillboardSize;
   image: string;
+  faces: BillboardFaceDisplay[];
+}
+
+export interface BillboardFaceDisplay {
+  faceId: BillboardFace['id'];
+  name: string;
+  isAvailable: boolean;
+  size: BillboardSize;
+  orientation: number;
+  isDigital?: boolean;
 }
 
 const LocationCard = ({
-  _id,
+  billboardId,
   name,
-  location,
-  status,
+  address,
   dailyViews,
   demographics,
-  size,
   image,
-}: BillboardLocation) => {
+  faces,
+}: BillboardDisplay) => {
+  const isAvailable = faces.some(f => f.isAvailable);
+
   return (
-    <Card
-      key={_id}
-      className="overflow-hidden shadow-pin-card hover:shadow-pin-button transition-all duration-300 hover:scale-105">
+    <Card className="overflow-hidden shadow-pin-card hover:shadow-pin-button transition-all duration-300 hover:scale-105">
       <div className="relative h-48">
-        <img src={image} alt={name} className="w-full h-full object-cover" />
+        <img src={image} alt={address} className="w-full h-full object-cover" />
         <div className="absolute top-4 right-4">
           <Badge
             className={
-              status === 'available'
-                ? 'bg-green-500 hover:bg-green-600'
-                : 'bg-pin-red hover:bg-pin-red-dark'
+              isAvailable ? 'bg-green-500 hover:bg-green-600' : 'bg-pin-red hover:bg-pin-red-dark'
             }>
-            {status === 'available' ? 'Available' : 'Occupied'}
+            {isAvailable ? 'Available' : 'Fully Occupied'}
           </Badge>
         </div>
       </div>
 
-      <CardContent className="p-6">
+      <CardContent className="pt-6 pb-0 px-4 md:px-6">
         <div className="mb-4">
           <h3 className="text-xl font-semibold text-foreground mb-2">{name}</h3>
-          <DataRow LucideIcon={MapPin} property={location} />
+          <DataRow LucideIcon={MapPin} property={address} />
         </div>
 
         <div className="space-y-3 mb-6">
-          <DataRow
-            LucideIcon={Scan}
-            property="Size"
-            value={`W: ${size.width}${size.unit} H: ${size.height}${size.unit}`}
-          />
           <DataRow LucideIcon={Eye} property="Daily Views" value={formatPopulation(dailyViews)} />
           <DataRow LucideIcon={Users} property="Demographics" value={demographics} />
         </div>
 
-        {status === 'available' ? (
-          <RegularBtn
-            variant="cta"
-            text="Select This Location"
-            className="w-full"
-            onClick={() => {
-              const form = document.getElementById('book-billboard');
-              const selectElement = form?.querySelector(
-                'select[name="billboardLocation"]'
-              ) as HTMLSelectElement;
-              if (selectElement) {
-                selectElement.value = _id;
-              }
-              form?.scrollIntoView({ behavior: 'smooth' });
-            }}
-          />
-        ) : (
-          <RegularBtn variant="outline" text="Currently Occupied" className="w-full" disabled />
-        )}
+        {/* Billboard Faces */}
+        <div className="space-y-3 mb-6">
+          <h4 className="text-sm font-semibold text-foreground">
+            Billboard Faces ({faces.length})
+          </h4>
+          {faces.map(face => (
+            <BillboardFaceCard
+              key={billboardId + '-' + face.faceId}
+              {...face}
+              billboardId={billboardId}
+            />
+          ))}
+        </div>
       </CardContent>
     </Card>
   );
@@ -142,6 +131,71 @@ const DataRow = ({ LucideIcon, property, value }: DataRowProps) => {
       </div>
       {value && (
         <span className="font-semibold text-foreground text-wrap break-words">{value}</span>
+      )}
+    </div>
+  );
+};
+
+const BillboardFaceCard = ({
+  faceId,
+  name,
+  isAvailable,
+  size,
+  orientation,
+  isDigital,
+  billboardId,
+}: BillboardFaceDisplay & { billboardId: string }) => {
+  return (
+    <div className="border border-border rounded-lg p-3 space-y-2">
+      <div className="flex items-center justify-between">
+        <h5 className="font-semibold font-montserrat">{name}</h5>
+        <div className="flex items-center gap-2">
+          {isDigital && (
+            <Badge variant="outline" className="text-xs">
+              Digital
+            </Badge>
+          )}
+          <Badge
+            variant={isAvailable ? 'default' : 'secondary'}
+            className={isAvailable ? 'bg-green-500 hover:bg-green-600' : ''}>
+            {isAvailable ? 'Available' : 'Occupied'}
+          </Badge>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className="flex items-center text-muted-foreground">
+          <Ruler className="w-3 h-3 mr-1" />
+          {/* {size.width}×{size.height}
+          {size.unit} */}
+          <p className="mr-1">
+            <span className="font-semibold text-dark/65">W:</span> {size.width}
+            {size.unit}
+          </p>
+          <p className="mx-1">
+            <span className="font-semibold text-dark/65">H:</span> {size.height}
+            {size.unit}
+          </p>
+        </div>
+        <div className="flex items-center text-muted-foreground">
+          <Compass className="w-3 h-3 mr-1" />
+          {getOrientationLabel(orientation)} ({orientation}°)
+        </div>
+      </div>
+
+      {isAvailable && (
+        <RegularBtn
+          variant="cta"
+          size="sm"
+          text="Book This Face"
+          className="w-full"
+          wrapClassName="w-full mt-2"
+          onClick={() => {
+            const form = document.getElementById('book-billboard');
+            window.location.hash = `billboardLocation:${billboardId} ${faceId}`;
+            form?.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
       )}
     </div>
   );

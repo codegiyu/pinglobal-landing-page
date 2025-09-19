@@ -56,7 +56,7 @@ export const Header = ({ className, solidBackground, ...props }: HeaderProps) =>
           {/* Desktop Navigation */}
           <nav className="">
             <ul className="list-none hidden lg:flex items-center space-x-8">
-              {NAV_LINKS.map((item, idx) => (
+              {NAV_LINKS.filter(s => !s.showInFooterOnly).map((item, idx) => (
                 <HeaderLink key={idx} {...item} hasSolidBg={hasSolidBg} />
               ))}
               <CTAButton />
@@ -77,7 +77,7 @@ export const Header = ({ className, solidBackground, ...props }: HeaderProps) =>
       {menuOpen && (
         <nav className="lg:hidden bg-white border-t border-border py-6">
           <ul className="list-none grid px-6 pb-6 space-y-0">
-            {NAV_LINKS.map((item, idx) => (
+            {NAV_LINKS.filter(s => !s.showInFooterOnly).map((item, idx) => (
               <HeaderLink key={idx} {...item} afterClick={() => setMenuOpen(false)} />
             ))}
           </ul>
@@ -94,6 +94,7 @@ export interface HeaderLinkProps {
   text: string;
   href: string;
   footerOnlySuffix?: string;
+  showInFooterOnly?: boolean;
   afterClick?: () => void;
   hasSolidBg?: boolean;
 }

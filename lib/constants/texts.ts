@@ -1,8 +1,9 @@
 import { Facebook, Instagram, Tiktok, Whatsapp } from '@/components/icons';
 import { HeaderLinkProps } from '@/components/layout/Header';
 import { FeatureCardProps } from '@/components/sections/home/About';
-import { BillboardLocation } from '@/components/sections/home/BillboardLocations';
+import { BillboardDisplay } from '@/components/sections/home/BillboardLocations';
 import { ContactCardProps } from '@/components/sections/home/Contact';
+import { RegulatoryCardProps } from '@/components/sections/home/Regulatories';
 import { Building2, Target, Globe2, Award, Phone, Mail, Clock } from 'lucide-react';
 
 const liveUrl = process.env.live_url || 'https://pinglobal.ng';
@@ -35,16 +36,21 @@ export const SEO_DETAILS = {
   authors: [{ name: 'Edward-Precious Omegbu', url: 'https://portfolio-codegiyu.vercel.app' }],
   keywords: [
     'pinglobal',
-    'the she initiative',
-    'shei',
-    'women',
-    'empowerment',
-    'gender-based violence',
-    'financial literacy',
-    'girl child',
-    'education',
-    'support',
-    'Maryam A. Gimba, Esq',
+    'pin global',
+    'billboard advertising',
+    'outdoor advertising',
+    'billboard agency',
+    // 'digital billboards',
+    'static billboards',
+    'billboard marketing',
+    'out-of-home media',
+    'brand visibility',
+    'advertising solutions',
+    'marketing campaigns',
+    'creative billboards',
+    'large format advertising',
+    'brand promotion',
+    'advertising agency',
   ],
   generator: 'Next.js',
   // referrer: 'no-referrer',
@@ -56,6 +62,7 @@ export const SEO_DETAILS = {
 export const NAV_LINKS: HeaderLinkProps[] = [
   { text: 'About', href: '/#about' },
   { text: 'Locations', href: '/#billboard-locations' },
+  { text: 'Regulatory Bodies', href: '/#regulatories', showInFooterOnly: true },
   { text: 'Book Billboard', href: '/#book-billboard' },
   { text: 'Contact', href: '/#contact' },
 ];
@@ -64,7 +71,8 @@ export const CONTACT_INFORMATION = {
   address: '18 Aba Close, Area 8, Garki, Abuja',
   tel: ['+234 811 111 6287', '+234 811 111 6284'],
   whatsapp: '+234 811 111 6284',
-  email: 'pinglobal@pinpoint.ng',
+  email: 'hello@pinglobal.ng',
+  locationUrl: 'https://maps.app.goo.gl/mwhvMGDnWFWNnEz8A',
 };
 
 export const CONTACT_CARDS: ContactCardProps[] = [
@@ -168,75 +176,138 @@ export const FEATURES: FeatureCardProps[] = [
   },
 ];
 
-export const footerCompanyDescription = `
-  We are a creative brand consultancy specializing in design, branding and packaging. 
-  Since 2020, we've partnered with leading organizations to solve brand and business challenges. 
-  With a diverse team across multiple locations, we harness the power of creativity to help businesses grow, stand out, and connect better with their audiences.
-`;
-
-export const BILLBOARDS: BillboardLocation[] = [
+export const REGULATORIES: RegulatoryCardProps[] = [
   {
-    _id: 'downtown_intersection',
-    name: 'Downtown Intersection',
-    location: '5th & Main Street',
-    status: 'available',
-    dailyViews: 125_000,
-    demographics: 'Business Professionals',
-    size: { width: 20, height: 5, unit: 'm' },
-    image: '/images/billboard-sample.webp',
+    img: '/images/ARCON-logo.png',
+    name: 'Advertising Regulatory Council of Nigeria',
   },
   {
-    _id: 'highway_101_north',
-    name: 'Highway 101 North',
-    location: 'Mile Marker 45',
-    status: 'occupied',
-    dailyViews: 200_000,
-    demographics: 'Commuters',
-    size: { width: 20, height: 5, unit: 'm' },
-    image: '/images/billboard-sample.webp',
+    img: '/images/OAAN-logo.jpg',
+    name: 'Outdoor Advertising Association of Nigeria',
   },
   {
-    _id: 'shopping_district',
-    name: 'Shopping District',
-    location: 'Westfield Mall Area',
-    status: 'available',
-    dailyViews: 80_000,
-    demographics: 'Families & Shoppers',
-    size: { width: 20, height: 5, unit: 'm' },
-    image: '/images/billboard-sample.webp',
-  },
-  {
-    _id: 'airport_terminal',
-    name: 'Airport Terminal',
-    location: 'Terminal 2 Entrance',
-    status: 'available',
-    dailyViews: 150_000,
-    demographics: 'Travelers',
-    size: { width: 20, height: 5, unit: 'm' },
-    image: '/images/billboard-sample.webp',
-  },
-  {
-    _id: 'university_district',
-    name: 'University District',
-    location: 'Campus Drive',
-    status: 'occupied',
-    dailyViews: 95_000,
-    demographics: 'Students & Faculty',
-    size: { width: 20, height: 5, unit: 'm' },
-    image: '/images/billboard-sample.webp',
-  },
-  {
-    _id: 'subway_station',
-    name: 'Subway Station',
-    location: 'Central Metro Hub',
-    status: 'available',
-    dailyViews: 175_000,
-    demographics: 'Transit Users',
-    size: { width: 20, height: 5, unit: 'm' },
-    image: '/images/billboard-sample.webp',
+    img: '/images/DOAS-logo.png',
+    name: 'Department of Outdoor Advertisement and Signage',
   },
 ];
 
-export const AVAILABLE_BILLBOARDS = BILLBOARDS.filter(b => b.status === 'available');
+export const BILLBOARDS: BillboardDisplay[] = [
+  {
+    billboardId: 'SBB-lifecamp-001',
+    name: 'Life Camp, Abuja',
+    address: '5th & Main Street',
+    dailyViews: 125_000,
+    demographics: 'Business Professionals',
+    image: '/images/billboard-sample.webp',
+    faces: [
+      {
+        faceId: 'east-face',
+        name: 'East Face',
+        orientation: 88,
+        size: { width: 20, height: 10, unit: 'ft' },
+        isAvailable: true,
+      },
+      {
+        faceId: 'west-face',
+        name: 'West Face',
+        orientation: 268,
+        size: { width: 20, height: 10, unit: 'ft' },
+        isAvailable: false,
+      },
+    ],
+  },
+  {
+    billboardId: 'SBB-apo-001',
+    name: 'Apo, Abuja',
+    address: 'Mile Marker 45',
+    dailyViews: 200_000,
+    demographics: 'Commuters',
+    image: '/images/billboard-sample.webp',
+    faces: [
+      {
+        faceId: 'grand-screen',
+        name: 'Grand Screen',
+        orientation: 150,
+        size: { width: 20, height: 10, unit: 'ft' },
+        isAvailable: false,
+        isDigital: true,
+      },
+    ],
+  },
+  {
+    billboardId: 'SBB-lokogoma-001',
+    name: 'Lokogoma, Abuja',
+    address: 'Westfield Mall Area',
+    dailyViews: 80_000,
+    demographics: 'Families & Shoppers',
+    image: '/images/billboard-sample.webp',
+    faces: [
+      {
+        faceId: 'north-east-face',
+        name: 'North East Face',
+        orientation: 43,
+        size: { width: 20, height: 10, unit: 'ft' },
+        isAvailable: true,
+      },
+      {
+        faceId: 'south-west-face',
+        name: 'South West Face',
+        orientation: 223,
+        size: { width: 20, height: 10, unit: 'ft' },
+        isAvailable: true,
+      },
+    ],
+  },
+  {
+    billboardId: 'SBB-guzape-001',
+    name: 'Guzape, Abuja',
+    address: 'Terminal 2 Entrance',
+    dailyViews: 150_000,
+    demographics: 'Travelers',
+    image: '/images/billboard-sample.webp',
+    faces: [
+      {
+        faceId: 'east-face',
+        name: 'East Face',
+        orientation: 88,
+        size: { width: 20, height: 10, unit: 'ft' },
+        isAvailable: true,
+      },
+      {
+        faceId: 'west-face',
+        name: 'West Face',
+        orientation: 268,
+        size: { width: 20, height: 10, unit: 'ft' },
+        isAvailable: true,
+      },
+    ],
+  },
+  {
+    billboardId: 'SBB-katampe-001',
+    name: 'Katampe, Abuja',
+    address: 'Campus Drive',
+    dailyViews: 95_000,
+    demographics: 'Students & Faculty',
+    image: '/images/billboard-sample.webp',
+    faces: [
+      {
+        faceId: 'market-face',
+        name: 'Facing The Market',
+        orientation: 315,
+        size: { width: 20, height: 10, unit: 'ft' },
+        isAvailable: false,
+      },
+      {
+        faceId: 'opposite-market-face',
+        name: 'Opposite The Market',
+        orientation: 135,
+        size: { width: 20, height: 10, unit: 'ft' },
+        isAvailable: true,
+      },
+    ],
+  },
+];
 
-export const PRIVACY_POLICY: string[][] = [];
+export const AVAILABLE_BILLBOARD_FACES = BILLBOARDS.flatMap(billboard =>
+  billboard.faces.filter(face => face.isAvailable).map(face => ({ ...face, billboard }))
+);

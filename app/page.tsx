@@ -4,6 +4,7 @@ import { BillboardsLocations } from '@/components/sections/home/BillboardLocatio
 import { Booking } from '@/components/sections/home/Booking';
 import { Contact } from '@/components/sections/home/Contact';
 import { Hero } from '@/components/sections/home/Hero';
+import { Regulatories } from '@/components/sections/home/Regulatories';
 
 export default function Home() {
   return (
@@ -11,6 +12,7 @@ export default function Home() {
       <Hero />
       <About />
       <BillboardsLocations />
+      <Regulatories />
       <Booking />
       <Contact />
     </MainLayout>
