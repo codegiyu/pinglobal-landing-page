@@ -1,11 +1,11 @@
 // A face (side) of a billboard
 export interface BillboardFace {
-  id: string;
-  billboardId: string; // reference to parent billboard
+  _id: string;
+  billboard: string; // reference to parent billboard
   name: string; // Like Face A or Face 2 or East Face
 
   orientationDegrees: number; // 0–359
-  orientationLabel: string; // e.g. "N", "NE", "SSE"
+  orientationLabel: Direction; // e.g. "N", "NE", "SSE"
 
   size: BillboardSize;
 
@@ -26,13 +26,15 @@ export interface BillboardFace {
 
 // The billboard structure itself
 export interface Billboard {
-  id: string;
+  _id: string;
   name: string;
+  slug: string;
 
   location: {
-    latitude: number;
-    longitude: number;
+    latitude?: number;
+    longitude?: number;
     address: string;
+    area: string;
     city: string;
     state: string;
     country: string;
