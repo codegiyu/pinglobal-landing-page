@@ -54,7 +54,7 @@ export interface BillboardDisplay {
 }
 
 export interface BillboardFaceDisplay {
-  faceId: BillboardFace['id'];
+  faceId: BillboardFace['_id'];
   name: string;
   isAvailable: boolean;
   size: BillboardSize;
