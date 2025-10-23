@@ -155,7 +155,7 @@ export const bookingFormData: RequestFormProps<typeof bookingFormSchema> = {
           type: 'date',
           label: 'Preferred Start Date',
           min: new Date().toISOString().split('T')[0],
-          required: false,
+          required: true,
         },
       },
       {
@@ -165,7 +165,7 @@ export const bookingFormData: RequestFormProps<typeof bookingFormSchema> = {
           type: 'date',
           label: 'Preferred End Date',
           min: new Date().toISOString().split('T')[0],
-          required: false,
+          required: true,
         },
       },
     ],

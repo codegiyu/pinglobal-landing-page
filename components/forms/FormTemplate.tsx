@@ -188,10 +188,6 @@ export const RequestForm = memo(
     }
 
     useEffect(() => {
-      console.log({ formValues });
-    }, [formValues]);
-
-    useEffect(() => {
       const onHashChange = () => {
         if (window.location.hash) {
           const hash = window.location.hash.substring(1); // remove '#'
