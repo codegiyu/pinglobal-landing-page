@@ -15,7 +15,7 @@ function Textarea({ className, ...props }: TextareaProps) {
         focus-visible:ring-primary/50 aria-invalid:ring-destructive/20 \
         aria-invalid:border-destructive \
         flex text-xs outline-none focus-visible:ring-[2px] \
-        disabled:cursor-not-allowed disabled:opacity-50 md:text-xs',
+        disabled:cursor-not-allowed disabled:opacity-50 md:text-[0.9375rem]',
         className
       )}
       {...props}

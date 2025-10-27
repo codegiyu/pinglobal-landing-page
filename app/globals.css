@@ -363,7 +363,7 @@
     @apply border-border outline-ring/50;
   }
   html {
-    @apply text-[16px] scroll-smooth;
+    @apply text-[16px] md:text-[14px] lg:text-[13px] scroll-smooth;
   }
   body {
     @apply min-h-screen w-full bg-white font-poppins text-[0.75rem] leading-[1.4] tracking-[0.05em] break-words text-wrap text-dark;
