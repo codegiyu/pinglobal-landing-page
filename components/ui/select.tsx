@@ -46,7 +46,7 @@ function SelectTrigger({
       data-slot="select-trigger"
       data-size={size}
       className={cn(
-        "w-full bg-transparent px-4 py-4 text-xs md:text-xs border border-border \
+        "w-full bg-transparent px-4 py-4 text-xs md:text-[0.9375rem] border border-border \
         rounded-[6px] focus:ring-2 focus:ring-primary focus-visible:border-primary \
         focus-visible:ring-primary/50 focus:border-transparent transition-all \
         duration-200 font-montserrat data-[placeholder]:text-muted-foreground \

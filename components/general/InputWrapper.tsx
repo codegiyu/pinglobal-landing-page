@@ -27,7 +27,7 @@ export const InputWrapper = ({
         {label && (
           <span
             className={cn(
-              'text-[0.75rem] leading-[1.2] font-medium text-dark font-poppins',
+              'text-[0.75rem] md:text-[0.875rem] leading-[1.2] font-medium text-dark font-poppins',
               labelTextClassName
             )}>
             {label}

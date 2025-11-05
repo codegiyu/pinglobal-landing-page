@@ -23,14 +23,14 @@ export const Hero = () => {
           <div className="max-w-4xl">
             {/* Headline */}
             <div className="animate-fade-in">
-              <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl 2xl:text-7xl font-bold text-white mb-6 leading-tight">
                 Billboard Advertising
                 <span className="text-pin-red-light block">That Gets You Seen</span>
               </h1>
             </div>
 
             {/* Subtext */}
-            <p className="text-xl md:text-2xl text-gray-200 mb-12 leading-relaxed">
+            <p className="text-base md:text-xl xl:text-2xl text-gray-200 mb-12 leading-relaxed">
               Connecting brands with audiences through strategic billboard placements across prime
               locations.
             </p>
