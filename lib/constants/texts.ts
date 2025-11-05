@@ -21,8 +21,8 @@ export const SEO_DETAILS = {
   alternates: {
     canonical: liveUrl,
   },
-  image: 'https://static.pinglobal.ng/images/site-preview.webp',
-  icons: '/favicon.png',
+  image: 'https://static.pinglobal.ng/site-preview.webp',
+  icons: 'https://static.pinglobal.ng/favicon.png',
   robots: {
     index: true,
     follow: true,
@@ -37,9 +37,11 @@ export const SEO_DETAILS = {
   keywords: [
     'pinglobal',
     'pin global',
-    'billboard advertising',
-    'outdoor advertising',
-    'billboard agency',
+    'Pinpoint Global',
+    'abuja billboard company',
+    'billboard advertising in abuja',
+    'outdoor advertising in abuja',
+    'billboard agency in abuja',
     // 'digital billboards',
     'static billboards',
     'billboard marketing',
@@ -71,7 +73,7 @@ export const CONTACT_INFORMATION = {
   address: '18 Aba Close, Area 8, Garki, Abuja',
   tel: ['+234 811 111 6287', '+234 811 111 6284'],
   whatsapp: '+234 811 111 6284',
-  email: 'hello@pinglobal.ng',
+  email: 'info@pinglobal.ng',
   locationUrl: 'https://maps.app.goo.gl/mwhvMGDnWFWNnEz8A',
 };
 
@@ -128,14 +130,14 @@ export const CONTACT_CARDS_FOR_FOOTER = [
 export const SOCIALS = [
   {
     label: 'Instagram',
-    href: 'https://www.instagram.com/pinpointpackaging?igsh=MXNlbTN3MnQ3bzdicg==',
+    href: 'https://www.instagram.com/pinglobalbillboard',
     Icon: Instagram,
   },
-  {
-    label: 'Facebook',
-    href: 'https://www.facebook.com/share/19MUWfmSiG/?mibextid=wwXIfr',
-    Icon: Facebook,
-  },
+  // {
+  //   label: 'Facebook',
+  //   href: 'https://www.facebook.com/share/19MUWfmSiG/?mibextid=wwXIfr',
+  //   Icon: Facebook,
+  // },
   // {
   //   label: 'LinkedIn',
   //   href: 'https://be.linkedin.com/company/atelier-design',
@@ -146,11 +148,11 @@ export const SOCIALS = [
   //   href: 'https://x.com/atelierdesign',
   //   Icon: XIcon,
   // },
-  {
-    label: 'Tiktok',
-    href: 'https://www.tiktok.com/@pinpointglobal?_t=ZS-8yRAXCYmRLp&_r=1',
-    Icon: Tiktok,
-  },
+  // {
+  //   label: 'Tiktok',
+  //   href: 'https://www.tiktok.com/@pinpointglobal?_t=ZS-8yRAXCYmRLp&_r=1',
+  //   Icon: Tiktok,
+  // },
 ];
 
 export const FEATURES: FeatureCardProps[] = [
