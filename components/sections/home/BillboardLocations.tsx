@@ -1,16 +1,121 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 'use client';
 
+import { useEffect, useState, useMemo } from 'react';
 import { RegularBtn } from '@/components/atoms/RegularBtn';
 import { Card, CardContent } from '@/components/general/Card';
 import { Badge } from '@/components/ui/badge';
-import { AVAILABLE_BILLBOARD_FACES, BILLBOARDS } from '@/lib/constants/texts';
+import { callApi } from '@/lib/services/callApi';
+import type { IPopulatedBillboard } from '@/lib/constants/endpoints';
 import { BillboardFace, BillboardSize } from '@/lib/types/billboard';
 import { LucideIconComp } from '@/lib/types/general';
 import { formatPopulation, getOrientationLabel } from '@/lib/utils/general';
-import { MapPin, Users, Eye, Compass, Ruler } from 'lucide-react';
+import { MapPin, Users, Eye, Compass, Ruler, Loader2 } from 'lucide-react';
+import { useBillboardsStore } from '@/lib/stores/useBillboardsStore';
+
+// Transform API billboard data to display format
+const transformBillboard = (billboard: IPopulatedBillboard): BillboardDisplay => {
+  // Get the first image or use a placeholder
+  const image = billboard.images?.[0] || '/images/billboard-sample.webp';
+
+  // Build address from location
+  const addressParts = [
+    billboard.location.address,
+    billboard.location.area,
+    billboard.location.city,
+    billboard.location.state,
+  ].filter(Boolean);
+  const address = addressParts.join(', ') || 'Location details coming soon';
+
+  // Transform faces
+  const faces = (billboard.faces || []).map(face => ({
+    faceId: face._id,
+    slug: face.slug,
+    name: face.name,
+    isAvailable:
+      !face.hasActiveBookings &&
+      !face.isBooked &&
+      (face.currentBookings ?? []).length === 0 &&
+      face.status === 'active',
+    size: face.size,
+    orientation: face.orientationDegrees ?? 0, // Handle optional orientationDegrees
+    isDigital: face.isDigital ?? false, // Handle optional isDigital
+  }));
+
+  return {
+    billboardId: billboard._id,
+    name: billboard.name,
+    address,
+    dailyViews: billboard.dailyViews || 0,
+    demographics: billboard.demographics || 'General Audience',
+    image,
+    faces,
+  };
+};
 
 export const BillboardsLocations = () => {
+  const {
+    billboards: rawBillboards,
+    loading,
+    error,
+    actions: { setLoading, setError, setBillboards },
+  } = useBillboardsStore(state => ({
+    billboards: state.billboards,
+    loading: state.loading,
+    error: state.error,
+    actions: state.actions,
+  }));
+  const [totalLocations, setTotalLocations] = useState(0);
+  const [availableFaces, setAvailableFaces] = useState(0);
+
+  // Transform billboards for display
+  const billboards = useMemo(() => rawBillboards.map(transformBillboard), [rawBillboards]);
+
+  useEffect(() => {
+    const fetchBillboards = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const { data, error: apiError } = await callApi('LIST_BILLBOARDS', {
+          query: '?page=1&limit=100', // Fetch up to 100 billboards
+        });
+
+        if (apiError) {
+          setError(apiError.message || 'Failed to load billboards');
+          setLoading(false);
+          return;
+        }
+
+        if (data?.billboards) {
+          setBillboards(data.billboards);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    // Only fetch if we don't have billboards already
+    if (rawBillboards.length === 0) {
+      fetchBillboards();
+    }
+  }, [rawBillboards.length]);
+
+  // Calculate stats when billboards change
+  useEffect(() => {
+    if (billboards.length > 0) {
+      setTotalLocations(billboards.length);
+      const totalAvailable = billboards.reduce(
+        (acc: number, billboard: BillboardDisplay) =>
+          acc + billboard.faces.filter((face: BillboardFaceDisplay) => face.isAvailable).length,
+        0
+      );
+      setAvailableFaces(totalAvailable);
+    }
+  }, [billboards]);
+
   return (
     <section id="billboard-locations" className="py-24 bg-background">
       <div className="regular-container">
@@ -25,19 +130,46 @@ export const BillboardsLocations = () => {
           {/* Filter Stats */}
           <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Badge variant="outline" className="text-sm px-4 py-2">
-              {BILLBOARDS.length} Total Locations
+              {loading ? '...' : totalLocations} Total Locations
             </Badge>
             <Badge className="text-sm px-4 py-2 bg-green-500 hover:bg-green-600">
-              {AVAILABLE_BILLBOARD_FACES.length} Available Faces
+              {loading ? '...' : availableFaces} Available Faces
             </Badge>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {BILLBOARDS.map(billboard => (
-            <LocationCard key={billboard.billboardId} {...billboard} />
-          ))}
-        </div>
+        {loading && (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <span className="ml-3 text-muted-foreground">Loading billboards...</span>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-12">
+            <p className="text-red-500 mb-4">{error}</p>
+            <RegularBtn
+              variant="outline"
+              // size="sm"
+              text="Retry"
+              onClick={() => window.location.reload()}
+            />
+          </div>
+        )}
+
+        {!loading && !error && billboards.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No billboards available at the moment.</p>
+          </div>
+        )}
+
+        {!loading && !error && billboards.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {billboards.map((billboard: BillboardDisplay) => (
+              <LocationCard key={billboard.billboardId} {...billboard} />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
@@ -55,6 +187,7 @@ export interface BillboardDisplay {
 
 export interface BillboardFaceDisplay {
   faceId: BillboardFace['_id'];
+  slug: string;
   name: string;
   isAvailable: boolean;
   size: BillboardSize;
@@ -63,7 +196,6 @@ export interface BillboardFaceDisplay {
 }
 
 const LocationCard = ({
-  billboardId,
   name,
   address,
   dailyViews,
@@ -104,11 +236,7 @@ const LocationCard = ({
             Billboard Faces ({faces.length})
           </h4>
           {faces.map(face => (
-            <BillboardFaceCard
-              key={billboardId + '-' + face.faceId}
-              {...face}
-              billboardId={billboardId}
-            />
+            <BillboardFaceCard key={face.slug} {...face} />
           ))}
         </div>
       </CardContent>
@@ -137,14 +265,13 @@ const DataRow = ({ LucideIcon, property, value }: DataRowProps) => {
 };
 
 const BillboardFaceCard = ({
-  faceId,
+  slug,
   name,
   isAvailable,
   size,
   orientation,
   isDigital,
-  billboardId,
-}: BillboardFaceDisplay & { billboardId: string }) => {
+}: BillboardFaceDisplay) => {
   return (
     <div className="border border-border rounded-lg p-3 space-y-2">
       <div className="flex items-center justify-between">
@@ -192,7 +319,7 @@ const BillboardFaceCard = ({
           wrapClassName="w-full mt-2"
           onClick={() => {
             const form = document.getElementById('book-billboard');
-            window.location.hash = `billboardLocation:${billboardId} ${faceId}`;
+            window.location.hash = `billboardLocation:${slug}`;
             form?.scrollIntoView({ behavior: 'smooth' });
           }}
         />

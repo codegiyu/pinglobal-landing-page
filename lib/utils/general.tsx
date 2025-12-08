@@ -1,6 +1,8 @@
 import { DIRECTIONS } from '../types/billboard';
 import { SelectOption } from '../types/general';
 import capitalize from 'lodash/capitalize';
+import type { CallApiResponse, ResponseMessage, ApiErrorResponse } from '../types/http';
+import type { AllEndpoints } from '../constants/endpoints';
 
 /**
  * @param ms number of milliseconds you want your process to be delayed by
@@ -314,3 +316,47 @@ export function getOrientationLabel(degrees: number): string {
 
   return DIRECTIONS[index];
 }
+
+// Functions needed by callApi
+export const getPathname = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.pathname;
+  }
+  return '';
+};
+
+export function getQueryParam(key: string): string {
+  if (typeof window === 'undefined') return '';
+  const params = new URLSearchParams(window.location.search);
+  return params.get(key) ?? '';
+}
+
+export const getDataFromRequest = <T extends keyof AllEndpoints>(
+  response: CallApiResponse<T>,
+  requestName: T
+): ResponseMessage<T> => {
+  if (!response.data) {
+    const errorMessage = response.error?.message ?? '';
+    if (errorMessage) {
+      console.error({ error: errorMessage });
+    }
+
+    return {
+      message: errorMessage,
+      type: 'error',
+      error:
+        response.error ??
+        ({
+          success: false,
+          message: '',
+          responseCode: 500,
+          error: '',
+        } satisfies ApiErrorResponse),
+      requestName,
+    };
+  }
+
+  const { message, data } = response.data;
+
+  return { message, type: 'success', data, requestName };
+};
