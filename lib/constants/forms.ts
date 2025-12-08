@@ -1,8 +1,6 @@
 import { RequestFormProps, StringOrStringArraySchema } from '@/components/forms/FormTemplate';
 import { z } from 'zod';
 import { default as pick } from 'lodash/pick';
-import { AVAILABLE_BILLBOARD_FACES } from './texts';
-import { SelectOption } from '../types/general';
 // import { generateOptionsFromArray } from '../utils/general';
 
 const ALL_FIELDS_SCHEMA: Record<string, StringOrStringArraySchema> = {
@@ -137,13 +135,7 @@ export const bookingFormData: RequestFormProps<typeof bookingFormSchema> = {
       selectProps: {
         label: 'Select Billboard Location',
         placeholder: 'Choose an available billboard location',
-        options: AVAILABLE_BILLBOARD_FACES.map(
-          face =>
-            ({
-              value: `${face.billboard.billboardId} ${face.faceId}`,
-              text: `${face.billboard.name} - ${face.name}`,
-            }) satisfies SelectOption
-        ),
+        options: [],
         required: true,
       },
     },

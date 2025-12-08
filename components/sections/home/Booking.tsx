@@ -1,6 +1,6 @@
 'use client';
 
-import { PinGlobalForm } from '@/components/forms/RequestForms';
+import { BookingForm } from '@/components/forms/BookingForm';
 
 export const Booking = () => {
   return (
@@ -17,7 +17,7 @@ export const Booking = () => {
             </p>
           </div>
 
-          <PinGlobalForm slug="billboard_booking" />
+          <BookingForm />
         </div>
       </div>
     </section>
