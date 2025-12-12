@@ -19,7 +19,7 @@ export interface BillboardsStore {
 
 const initialData: Omit<BillboardsStore, 'actions'> = {
   billboards: [],
-  loading: false,
+  loading: true,
   error: null,
 };
 

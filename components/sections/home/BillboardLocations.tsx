@@ -11,7 +11,7 @@ import type { IPopulatedBillboard } from '@/lib/constants/endpoints';
 import { BillboardFace, BillboardSize } from '@/lib/types/billboard';
 import { LucideIconComp } from '@/lib/types/general';
 import { formatPopulation, getOrientationLabel } from '@/lib/utils/general';
-import { MapPin, Users, Eye, Compass, Ruler, Loader2 } from 'lucide-react';
+import { MapPin, Users, Eye, Compass, Ruler } from 'lucide-react';
 import { useBillboardsStore } from '@/lib/stores/useBillboardsStore';
 
 // Transform API billboard data to display format
@@ -54,6 +54,77 @@ const transformBillboard = (billboard: IPopulatedBillboard): BillboardDisplay =>
   };
 };
 
+const BillboardSkeleton = () => {
+  return (
+    <Card className="overflow-hidden shadow-pin-card">
+      {/* Image skeleton */}
+      <div className="relative h-48 lg:h-64 bg-muted animate-pulse">
+        <div className="absolute top-4 right-4">
+          <div className="h-6 w-20 bg-muted-foreground/20 rounded-full" />
+        </div>
+      </div>
+
+      <CardContent className="pt-6 pb-0 px-4 md:px-6">
+        {/* Title and Address skeleton */}
+        <div className="mb-4">
+          <div className="h-6 w-3/4 bg-muted rounded animate-pulse mb-2" />
+          <div className="grid grid-cols-[1fr_auto] items-center">
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 bg-muted rounded animate-pulse" />
+              <div className="h-4 w-2/3 bg-muted rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
+
+        {/* Data rows skeleton */}
+        <div className="space-y-3 mb-6">
+          <div className="grid grid-cols-[1fr_auto] items-center">
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 bg-muted rounded animate-pulse" />
+              <div className="h-4 w-24 bg-muted rounded animate-pulse" />
+            </div>
+            <div className="h-4 w-16 bg-muted rounded animate-pulse" />
+          </div>
+          <div className="grid grid-cols-[1fr_auto] items-center">
+            <div className="flex items-center gap-2">
+              <div className="h-4 w-4 bg-muted rounded animate-pulse" />
+              <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+            </div>
+            <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+          </div>
+        </div>
+
+        {/* Billboard Faces skeleton */}
+        <div className="space-y-3 mb-6">
+          <div className="h-4 w-32 bg-muted rounded animate-pulse" />
+          {Array.from({ length: 2 }).map((_, index) => (
+            <div key={index} className="border border-border rounded-lg p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="h-4 w-20 bg-muted rounded animate-pulse" />
+                <div className="flex items-center gap-2">
+                  <div className="h-5 w-12 bg-muted rounded animate-pulse" />
+                  <div className="h-5 w-16 bg-muted rounded animate-pulse" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="flex items-center gap-1">
+                  <div className="h-3 w-3 bg-muted rounded animate-pulse" />
+                  <div className="h-3 w-full bg-muted rounded animate-pulse" />
+                </div>
+                <div className="flex items-center gap-1">
+                  <div className="h-3 w-3 bg-muted rounded animate-pulse" />
+                  <div className="h-3 w-full bg-muted rounded animate-pulse" />
+                </div>
+              </div>
+              <div className="h-8 w-full bg-muted rounded animate-pulse mt-2" />
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
 export const BillboardsLocations = () => {
   const {
     billboards: rawBillboards,
@@ -69,8 +140,42 @@ export const BillboardsLocations = () => {
   const [totalLocations, setTotalLocations] = useState(0);
   const [availableFaces, setAvailableFaces] = useState(0);
 
-  // Transform billboards for display
-  const billboards = useMemo(() => rawBillboards.map(transformBillboard), [rawBillboards]);
+  // Transform billboards for display and sort by available faces (most available first)
+  // Billboards with faces but none available come before billboards with no faces at all
+  const billboards = useMemo(() => {
+    const transformed = rawBillboards.map(transformBillboard);
+    return transformed.sort((a, b) => {
+      const aAvailableCount = a.faces.filter(face => face.isAvailable).length;
+      const bAvailableCount = b.faces.filter(face => face.isAvailable).length;
+      const aHasFaces = a.faces.length > 0;
+      const bHasFaces = b.faces.length > 0;
+
+      // If both have available faces, sort by count (descending)
+      if (aAvailableCount > 0 && bAvailableCount > 0) {
+        return bAvailableCount - aAvailableCount;
+      }
+
+      // If one has available faces and the other doesn't, prioritize the one with available faces
+      if (aAvailableCount > 0 && bAvailableCount === 0) {
+        return -1;
+      }
+      if (aAvailableCount === 0 && bAvailableCount > 0) {
+        return 1;
+      }
+
+      // Both have no available faces
+      // Billboards with faces (but none available) come before billboards with no faces
+      if (aHasFaces && !bHasFaces) {
+        return -1;
+      }
+      if (!aHasFaces && bHasFaces) {
+        return 1;
+      }
+
+      // Both have no faces, or both have faces but none available - maintain original order
+      return 0;
+    });
+  }, [rawBillboards]);
 
   useEffect(() => {
     const fetchBillboards = async () => {
@@ -139,9 +244,10 @@ export const BillboardsLocations = () => {
         </div>
 
         {loading && (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-            <span className="ml-3 text-muted-foreground">Loading billboards...</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <BillboardSkeleton key={index} />
+            ))}
           </div>
         )}
 
@@ -207,7 +313,7 @@ const LocationCard = ({
 
   return (
     <Card className="overflow-hidden shadow-pin-card hover:shadow-pin-button transition-all duration-300 hover:scale-105">
-      <div className="relative h-48">
+      <div className="relative h-48 lg:h-64">
         <img src={image} alt={address} className="w-full h-full object-cover" />
         <div className="absolute top-4 right-4">
           <Badge
@@ -226,8 +332,12 @@ const LocationCard = ({
         </div>
 
         <div className="space-y-3 mb-6">
-          <DataRow LucideIcon={Eye} property="Daily Views" value={formatPopulation(dailyViews)} />
-          <DataRow LucideIcon={Users} property="Demographics" value={demographics} />
+          {!!dailyViews && (
+            <DataRow LucideIcon={Eye} property="Daily Views" value={formatPopulation(dailyViews)} />
+          )}
+          {demographics && (
+            <DataRow LucideIcon={Users} property="Demographics" value={demographics} />
+          )}
         </div>
 
         {/* Billboard Faces */}
@@ -253,8 +363,8 @@ interface DataRowProps {
 const DataRow = ({ LucideIcon, property, value }: DataRowProps) => {
   return (
     <div className="grid grid-cols-[1fr_auto] items-center">
-      <div className="flex items-center text-muted-foreground">
-        <LucideIcon className="w-4 h-4 mr-2" />
+      <div className="flex items-start text-muted-foreground">
+        <LucideIcon className="w-4 h-4 mt-1 mr-2 flex-none" />
         <span className="text-sm">{property}</span>
       </div>
       {value && (

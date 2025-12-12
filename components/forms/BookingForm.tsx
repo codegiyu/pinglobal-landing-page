@@ -110,7 +110,6 @@ export const BookingForm = () => {
       });
     });
 
-    console.log({ availableFaces: faces });
     return faces;
   }, [billboards]);
 

@@ -369,7 +369,7 @@
     @apply min-h-screen w-full bg-white font-poppins text-[0.75rem] leading-[1.4] tracking-[0.05em] break-words text-wrap text-dark;
   }
   .regular-container {
-    @apply w-full max-w-7xl 2xl:max-w-[1500px] 3xl:max-w-[1700px] mx-auto px-4 sm:px-8 md:px-12 xl:px-16 2xl:px-24 3xl:px-36;
+    @apply w-full max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1500px] 3xl:max-w-[1700px] mx-auto px-4 sm:px-8 md:px-12 xl:px-20 2xl:px-24 3xl:px-36;
   }
   .section-block-padding {
     @apply py-20 md:py-24 lg:py-[6.5rem];
