@@ -370,6 +370,15 @@ export interface IBillboard {
   updatedAt: string;
 }
 
+export interface IBillboardFaceRates {
+  daily?: number;
+  weekly?: number;
+  monthly: number;
+  quarterly?: number;
+  sixMonthly?: number;
+  annually?: number;
+}
+
 export interface IBillboardFace {
   _id: string;
   billboard: string; // reference to parent billboard
@@ -386,7 +395,7 @@ export interface IBillboardFace {
   isDigital?: boolean;
   lighting: BillboardFaceLighting;
 
-  monthlyRate: number;
+  rates: IBillboardFaceRates;
 
   currentBookings: (string | { _id: string; startDate: string; endDate: string })[];
   isBooked?: boolean;
@@ -466,8 +475,8 @@ export interface IBillboardFacePricingHistory {
   _id: string;
   billboard: string;
   billboardFace: string;
-  previousMonthlyRate: number;
-  newMonthlyRate: number;
+  previousRates: IBillboardFaceRates;
+  newRates: IBillboardFaceRates;
   reason?: string;
   changedBy?: string;
   changeSource: 'admin' | 'system';

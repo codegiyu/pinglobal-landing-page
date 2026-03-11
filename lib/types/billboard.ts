@@ -14,7 +14,15 @@ export interface BillboardFace {
   isDigital: boolean;
   lighting: 'frontlit' | 'backlit' | 'none';
 
-  pricePerMonth?: number;
+  /** Rate per period; API returns rates (daily, weekly, monthly, etc.). Use rates.monthly for per-month display. */
+  rates?: {
+    daily?: number;
+    weekly?: number;
+    monthly: number;
+    quarterly?: number;
+    sixMonthly?: number;
+    annually?: number;
+  };
 
   booking: BillboardBooking | null;
 
